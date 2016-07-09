@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body ng-app="add" ng-controller="c">
+		<!--
+			点击 按钮 文本内容自动 +1
+				1. 按钮
+				2. 显示内容的html标签
+			
+		-->
+		<div add out-value="q"></div>
+<!--		<div add out-value="q" fn="addValue"></div>-->
+		<script src="js/angularjs-1.3.9.js"></script>
+		<script>
+			angular.module("add", [])
+				.controller("c", function($scope) {
+					$scope.q = 0;
+				})
+				.directive("add", function() {
+					return {
+						replace: false,
+						restrict: "A",
+						scope: {
+							value: "=outValue"
+						},
+						template: "<div>" +
+							"<p>{{value}}</p>" +
+							"<input type='button' ng-click='sumValue()' value='ADD'/>" +
+							"</div>",
+						//指令内部的控制器, 作用域范围只有指令内部
+						controller: function($scope) {
+							$scope.sumValue = function() {
+								$scope.value++;
+							}
+						}
+					}
+				})
+				
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script type="text/javascript" src="js/angularjs-1.3.9.js"></script>
+	</head>
+	<body>
+		<div ng-app="myapp" ng-controller="myctrl"> 
+			<ul ng-click="con($event)">
+				<li ng-repeat="i in item">{{i}}</li>
+			</ul>
+		</div>
+		<script>
+			angular.module("myapp",[])
+				.controller("myctrl",function($scope,$http){
+					$scope.item=["a","b","c","d"];
+					$scope.con=function(d){
+						console.log(d.target);
+					}
+				})
+		</script>
+	</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+		<script type="text/javascript" src="js/angularjs-1.3.9.js"></script>
+	</head>
+
+	<body ng-app="myapp" ng-controller="myctrl">
+		<div class="col-md-6 col-md-offset-3">
+			<table class="table table-hover table-striped table-bordered">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>器材名称</th>
+						<th>成本价</th>
+						<th>供应商</th>
+						<th>日期</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="i in listPage">
+						<td>{{i.id}}</td>
+						<td>{{i.name}}</td>
+						<td>{{i.price}}</td>
+						<td>{{i.gname}}</td>
+						<td>{{i.qdate}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="col-md-6 col-md-offset-3 text-center">
+			<nav>
+				<ul class="pagination">
+					<li>
+						<a href="#" aria-label="first" ng-click="changePage(1)">
+							首页
+						</a>
+					</li>
+					<li>
+						<a href="#" aria-label="Previous" ng-class="{0:'hidden'}[pages.prev]" ng-click="changePage(pages.prev)">
+							<span aria-hidden="true">&laquo;</span>
+						</a>
+					</li>
+					<li ng-repeat="i in page track by $index" ng-class="{true:'active'}[$index+1==pages.now]">
+						<a ng-click="changePage($index + 1)">{{$index + 1}}</a>
+					</li>
+					<li>
+						<a href="#" aria-label="Next" ng-class="{0:'hidden'}[pages.next]" ng-click="changePage(pages.next)">
+							<span aria-hidden="true">&raquo;</span>
+						</a>
+					</li>
+					<li>
+						<a href="#" aria-label="last" ng-click="changePage(pages.all)">尾页</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+		<script>
+		
+			angular.module("myapp", [])
+				.controller("myctrl", function($scope, $http) {
+					$scope.pages = {
+						now: 1,
+						size: 5,
+						prev: 0,
+						next: 2,
+						all: 0 //总页数，初始化一个值
+					}
+					$http.get("page.php")
+						.success(function(d) {
+							var page = Math.ceil(d / 5);
+//							console.log(page);
+							$scope.pages.all = page; //总页数 6
+							$scope.page = new Array(page);
+//							console.log($scope.page);
+						});
+					changePage($scope.pages.now);
+					$scope.changePage = changePage;
+
+					function changePage(pageNumber, size) {
+					
+						size = size || 5;
+						$http.get("pageson.php?p=" + pageNumber + "&s=" + size)
+							.success(function(d) {
+								console.log(d);
+								$scope.listPage = d;
+								//更新$scope.pages里的数据
+								$scope.pages.now = pageNumber;
+								$scope.pages.prev = pageNumber - 1;
+								$scope.pages.next = pageNumber + 1;
+								//当下一页的值超出总页数时, 使下一页的值变为0
+								if ($scope.pages.next > $scope.pages.all) {
+									$scope.pages.next = 0;
+								};
+								
+							});
+					}
+				});
+		</script>
+	</body>
+
+</html>
